@@ -173,7 +173,19 @@ Among the counties with the highest median sold prices were:
 - Marin
 
 ---
+## Data Quality Observations
 
+The exploratory analysis identified several records that should be reviewed during the data cleaning stage. At this stage, these observations have been flagged rather than removed.
+
+Potential data quality issues include:
+
+- **Negative DaysOnMarket values**, with a minimum of **-288 days**, which may indicate date inconsistencies or calculation errors.
+- **Extremely large LivingArea values**, with a maximum of **17,021,321 square feet**, which are unlikely for individual residential properties and should be verified.
+- **Very large ClosePrice values**, with a maximum of **$989,500,000**, which may represent exceptional transactions or potential data entry issues.
+- The distributions of **ClosePrice**, **LivingArea**, and **DaysOnMarket** are all **right-skewed**, indicating that a relatively small number of extreme observations substantially increase the mean above the median.
+- **65 records** were identified where the `ListingContractDate` occurred after the `CloseDate`, suggesting potential date consistency issues that require further investigation.
+
+These observations have been documented for follow-up during the data cleaning phase. The next step will be to determine whether each flagged record represents a valid market transaction or a data quality issue requiring correction or removal.
 ## Next Steps
 
 The next stage of the project will focus on enriching the MLS datasets with external economic data.
