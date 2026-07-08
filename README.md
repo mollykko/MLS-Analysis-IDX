@@ -20,19 +20,20 @@ This repository contains Python scripts for processing and analyzing monthly MLS
 
 ## Data
 
-- Source: CRMLS via CoreLogic Trestle API
-- Coverage: January 2024 – May 2026
+- **Source:** CRMLS via CoreLogic Trestle API
+- **Coverage:** January 2024 – May 2026
 
-### Week 1 Residential Datasets
+### Residential Dataset Size (Week 1)
 
-- Residential listings: 591,977 rows
-- Residential sold transactions: 430,635 rows
+- Residential listings: **591,977**
+- Residential sold transactions: **430,635**
 
 ---
 
 ## Tools
 
-- Python (pandas, matplotlib)
+- Python (pandas)
+- Matplotlib
 - Tableau
 
 ---
@@ -41,28 +42,28 @@ This repository contains Python scripts for processing and analyzing monthly MLS
 
 ## Completed
 
-- Found and loaded all monthly CRMLS listing files (`CRMLSListing*.csv`) from the `Data/` folder (29 files).
-- Found and loaded all monthly CRMLS sold files (`CRMLSSold*.csv`) from the `Data/` folder, including `_filled` versions (29 files).
-- Removed the extra `latfilled` and `lonfilled` columns from `_filled` sold files when present.
-- Concatenated all monthly files into:
+- Loaded all monthly CRMLS listing files (`CRMLSListing*.csv`) from the `Data/` folder (29 files).
+- Loaded all monthly CRMLS sold files (`CRMLSSold*.csv`) from the `Data/` folder, including `_filled` versions (29 files).
+- Removed the extra `latfilled` and `lonfilled` columns from `_filled` sold files.
+- Combined all monthly files into:
   - `listings.csv`
   - `sold.csv`
-- Filtered both datasets to Residential properties only (`PropertyType == "Residential"`).
-- Saved the combined Residential datasets to the `Outputs/` folder.
+- Filtered both datasets to Residential properties only.
+- Saved the Residential datasets into the `Outputs/` folder.
 
 ## Week 1 Results
 
 ### Listings
 
-- Monthly files loaded: 29
-- Rows after concatenation: 930,311
-- Residential rows: 591,977
+- Monthly files: **29**
+- Rows after concatenation: **930,311**
+- Residential rows: **591,977**
 
 ### Sold
 
-- Monthly files loaded: 29
-- Rows after concatenation: 640,335
-- Residential rows: 430,635
+- Monthly files: **29**
+- Rows after concatenation: **640,335**
+- Residential rows: **430,635**
 
 ---
 
@@ -70,75 +71,123 @@ This repository contains Python scripts for processing and analyzing monthly MLS
 
 ## Completed
 
-- Reloaded all monthly listing and sold datasets from the raw `Data/` folder.
+- Reloaded all monthly CRMLS listing and sold datasets from the raw `Data/` folder.
 - Inspected dataset structure, including:
   - row count
   - column count
-  - column data types
+  - data types
   - missing values
-- Reviewed all property types before filtering.
-- Calculated property type distributions and Residential property share.
+- Reviewed property types before filtering.
+- Calculated Residential property share.
 - Filtered both datasets to Residential properties.
-- Created missing value reports showing:
-  - data type
-  - null count
-  - missing percentage
-  - columns with more than 90% missing values
+- Created missing value reports.
+- Flagged columns with more than 90% missing values.
 - Removed columns with more than 90% missing values.
 - Generated numeric distribution summaries for:
   - ClosePrice
-  - ListPrice
-  - OriginalListPrice
   - LivingArea
-  - LotSizeAcres
-  - BedroomsTotal
-  - BathroomsTotalInteger
   - DaysOnMarket
-  - YearBuilt
-- Generated histograms and boxplots for each numeric field.
-- Answered the exploratory data analysis (EDA) questions provided in the internship handbook.
-- Saved cleaned Week 2 datasets:
+- Saved cleaned datasets:
   - `sold_week2.csv`
   - `listings_week2.csv`
 
 ## Week 2 Results
 
-### Property Types
+### Property Type Distribution
 
-- 8 unique property types identified.
-- Residential sold records: 430,635
-- Residential listing records: 591,977
+Eight property types were identified.
+
+| Property Type | Share |
+|--------------|------:|
+| Residential | 67.25% |
+| ResidentialLease | 22.91% |
+| Land | 3.24% |
+| ManufacturedInPark | 2.71% |
+| ResidentialIncome | 2.68% |
+| CommercialSale | 0.62% |
+| CommercialLease | 0.52% |
+| BusinessOpportunity | 0.07% |
+
+After filtering:
+
+- Residential sold transactions: **430,635**
+- Residential listings: **591,977**
 
 ### Missing Value Summary
 
-**Sold dataset**
+| Dataset | Columns >90% Missing |
+|---------|---------------------:|
+| Sold | 15 |
+| Listings | 13 |
 
-- Columns above 90% missing: 15
+These columns were removed before saving the Week 2 datasets.
 
-**Listings dataset**
+### Numeric Distribution Summary
 
-- Columns above 90% missing: 13
+| Metric | ClosePrice | LivingArea | DaysOnMarket |
+|-------|-----------:|-----------:|-------------:|
+| Minimum | 0 | 0 | -288 |
+| Median | 825,000 | 1,644 | 18 |
+| Mean | 1,188,983 | 1,904 | 37.34 |
+| Maximum | 989,500,000 | 17,021,321 | 12,430 |
 
-### Numeric Distribution Highlights
+The summary statistics indicate that all three variables are right-skewed, with mean values exceeding their medians due to a relatively small number of extreme observations.
 
-| Field | Median | Mean |
-|-------|-------:|------:|
-| ClosePrice | $825,000 | $1,188,983 |
-| LivingArea | 1,644 sq ft | 1,904 sq ft |
-| DaysOnMarket | 18.0 | 37.3 |
+## Exploratory Data Analysis
 
-### Initial EDA Findings
+### Residential vs. Other Property Types
 
-- Residential property transactions represent the majority of the MLS records.
-- DaysOnMarket is strongly right-skewed, with most properties selling within a relatively short period.
-- Several numeric fields contain extreme values, including:
-  - negative DaysOnMarket values
-  - zero ClosePrice values
-  - unusually large LivingArea values
-- Approximately **40.09%** of homes sold above list price.
-- Approximately **42.54%** sold below list price.
-- **65** records were identified where the listing date occurred after the close date, indicating potential date consistency issues.
-- County-level median sale prices were summarized for further market analysis.
+Residential properties account for **67.25%** of all sold MLS records.
+
+### Median and Average Close Price
+
+- Median: **$825,000**
+- Mean: **$1,188,983**
+
+The mean is substantially higher than the median, indicating a right-skewed price distribution.
+
+### Days on Market
+
+- Median: **18 days**
+- Mean: **37.34 days**
+
+Most homes sold relatively quickly, while a smaller number remained on the market much longer.
+
+### Sold Above vs. Below List Price
+
+- Above list price: **40.09%**
+- Below list price: **42.54%**
+
+### Date Consistency
+
+A total of **65** records had a ListingContractDate later than the CloseDate. These records should be reviewed during data cleaning.
+
+### Highest Median Price Counties
+
+Among the counties with the highest median sold prices were:
+
+- San Mateo
+- Santa Clara
+- San Francisco
+- Orange
+- Marin
+
+---
+
+## Next Steps
+
+The next phase of the project will focus on data cleaning and feature engineering.
+
+Key tasks include:
+
+- Investigate extreme outliers identified during EDA.
+- Validate records with inconsistent dates.
+- Review zero and negative values for potential data quality issues.
+- Engineer additional market metrics, including:
+  - Price per square foot
+  - Sale-to-list price ratio
+  - Monthly market indicators
+- Prepare the cleaned analytical dataset for Tableau dashboards and market trend analysis.
 
 ---
 
@@ -155,8 +204,6 @@ README.md
 ---
 
 ## How to Run
-
-Place the raw monthly CRMLS CSV files inside the `Data/` folder.
 
 Run Week 1:
 
@@ -175,11 +222,18 @@ Week 2 generates:
 
 ### Outputs
 
-- `sold_week2.csv`
-- `listings_week2.csv`
+- sold_week2.csv
+- listings_week2.csv
+
+### Reports
+
+- Dataset structure reports
+- Property type reports
+- Missing value reports
+- Numeric distribution summary
 
 ---
 
 ## Repository Notes
 
-This repository is updated weekly throughout the internship. It contains Python scripts, documentation, and generated reports, while excluding the raw MLS datasets from version control.
+This repository is updated weekly throughout the internship. It contains Python scripts, documentation, and generated reports while excluding the raw MLS datasets from version control.
