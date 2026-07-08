@@ -176,19 +176,18 @@ Among the counties with the highest median sold prices were:
 
 ## Next Steps
 
-The next phase of the project will focus on data cleaning and feature engineering.
+The next stage of the project will focus on enriching the MLS datasets with external economic data.
 
-Key tasks include:
+Planned tasks include:
 
-- Investigate extreme outliers identified during EDA.
-- Validate records with inconsistent dates.
-- Review zero and negative values for potential data quality issues.
-- Engineer additional market metrics, including:
-  - Price per square foot
-  - Sale-to-list price ratio
-  - Monthly market indicators
-- Prepare the cleaned analytical dataset for Tableau dashboards and market trend analysis.
-
+- Fetch the weekly 30-year fixed mortgage rate (`MORTGAGE30US`) directly from the Federal Reserve Economic Data (FRED).
+- Resample the weekly mortgage rate data into monthly averages.
+- Create a `year_month` key from:
+  - `CloseDate` for the sold dataset
+  - `ListingContractDate` for the listings dataset
+- Merge the monthly mortgage rate data into both datasets using a left join.
+- Validate the merge by checking for unmatched records and missing mortgage rate values.
+- Prepare the enriched datasets for subsequent market trend analysis and Tableau dashboard development.
 ---
 
 ## Repository Structure
