@@ -41,7 +41,7 @@ Weeks 4 onward (cleaning, feature engineering, outlier detection, Tableau dashbo
   - Zero or near-zero `ClosePrice`/`ListPrice` values that aren't valid transactions
   - Extreme outliers in `LotSizeAcres`, `BathroomsTotalInteger`, and `LivingArea` (e.g. a recorded lot size in the millions of acres) consistent with data entry errors rather than real properties
 
-These are expected at this stage — the handbook's Week 4–7 phases specifically cover date-consistency flagging, invalid-value handling, and IQR-based outlier detection, so no cleaning has been applied to the data yet beyond the Residential filter and missing-column drops.
+These are expected at this stage, the handbook's Week 4–7 phases specifically cover date-consistency flagging, invalid-value handling, and IQR-based outlier detection, so no cleaning has been applied to the data yet beyond the Residential filter and missing-column drops.
 
 ## How to Run
 
