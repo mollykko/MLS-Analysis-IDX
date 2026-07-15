@@ -1,250 +1,73 @@
-# IDX Exchange MLS Analytics
+# IDX Exchange – MLS Analytics Project
 
-Data analyst internship project analyzing Southern California MLS transaction data from CRMLS (California Regional Multiple Listing Service).
+## Project Overview
 
-## Overview
-
-This repository contains Python scripts for processing and analyzing monthly MLS listing and sold transaction data. The final deliverable is two interactive Tableau dashboards covering market analysis and competitive intelligence.
+This project turns raw monthly MLS listing and sold transaction data (Southern/Central California, CRMLS feed) into clean, analysis-ready datasets that will power Tableau market analytics dashboards. Data is aggregated across months, validated, enriched with national mortgage rate data, and — in later phases — cleaned, feature-engineered, and visualized to surface housing market trends, pricing patterns, and competitive intelligence on top agents and brokerages.
 
 ## Objectives
 
-- Aggregate monthly MLS listing and sold transaction data into unified datasets
-- Clean and validate raw MLS data
-- Enrich datasets with 30-year fixed mortgage rate data from FRED
-- Engineer housing market metrics including price ratios, price per square foot, and days on market
-- Detect and handle outliers using statistical methods
-- Build interactive Tableau dashboards for market trend analysis and competitive intelligence
-- Produce a one-page market intelligence report and presentation
+- Prepare raw MLS data for reliable analysis
+- Engineer key housing market metrics (price ratios, price per sq ft, days on market)
+- Identify top-performing agents and brokerages
+- Build interactive Tableau dashboards for market and competitive analysis
+- Communicate findings through a market intelligence report and presentation
 
----
+## Pipeline Structure
 
-## Data
+| Week | Stage | What it does | Result |
+|---|---|---|---|
+| 1 | Monthly Dataset Aggregation | Concatenates 30 monthly listing files and 30 monthly sold files, then filters both to `PropertyType == 'Residential'` | 616,099 listings / 448,198 sold rows retained |
+| 2 | Dataset Structuring & Validation | Inspects structure and data types, quantifies missing values, drops columns >90% missing (retaining core analytical fields regardless), summarizes numeric distributions, and answers key EDA questions | 13 columns dropped per dataset; EDA complete (price, days on market, list-vs-close pricing, top counties) |
+| 3 | Mortgage Rate Enrichment | Fetches the FRED `MORTGAGE30US` weekly series, resamples to monthly averages, and merges onto both datasets using a `year_month` key | 100% match rate, no unmatched months, Jan 2024 – Jun 2026 |
 
-- **Source:** CRMLS via CoreLogic Trestle API
-- **Coverage:** January 2024 – May 2026
+Weeks 4 onward (cleaning, feature engineering, outlier detection, Tableau dashboards, final report) are in progress — see **Next Steps** below.
 
-### Residential Dataset Size (Week 1)
+## Key Results So Far
 
-- Residential listings: **591,977**
-- Residential sold transactions: **430,635**
+- **Residential share**: 67.31% of sold transactions and 63.66% of listings are Residential (the rest are lease, land, income, commercial, etc.)
+- **Close price**: median $825,000, mean $1,188,704 — the gap reflects a right-skewed market with a small number of very high-value sales
+- **Days on market**: median 18 days, mean 37.32 days
+- **Pricing dynamics**: 40.04% of homes sold above list price, 42.58% sold below list price
+- **Highest median-price counties**: Del Norte, San Mateo, and Santa Clara lead — Del Norte's ranking is likely driven by a small transaction count rather than genuinely being the priciest market, and is worth a sanity check before it appears in any dashboard
+- **Mortgage rate enrichment**: 100% coverage on both datasets, spanning January 2024 – June 2026, with no unmatched months after merging
 
----
+## Issues Encountered & Resolutions
 
-## Tools
+- **Duplicate monthly files**: added a validation step that raises an error if more than one file exists for the same month, to avoid silently double-counting a month's transactions
+- **FRED weekly-to-monthly conversion**: mortgage rates are published weekly; these were grouped and averaged into monthly rates before joining, using a `year_month` key built from `CloseDate` (sold) and `ListingContractDate` (listings)
+- **High-missing columns**: 13 fields (e.g. `FireplacesTotal`, `TaxAnnualAmount`, `ElementarySchoolDistrict`, `BuilderName`) were dropped from both datasets after exceeding 90% missing values; core analytical fields (price, size, dates, location) were retained regardless of missingness
+- **Data quality issues identified for upcoming cleaning phase** (Weeks 4–7), flagged but not yet resolved:
+  - Negative `DaysOnMarket` values (as low as -288), indicating a close or status date logged before the listing date
+  - Zero or near-zero `ClosePrice`/`ListPrice` values that aren't valid transactions
+  - Extreme outliers in `LotSizeAcres`, `BathroomsTotalInteger`, and `LivingArea` (e.g. a recorded lot size in the millions of acres) consistent with data entry errors rather than real properties
 
-- Python (pandas)
-- Matplotlib
-- Tableau
-
----
-
-# Week 1 — Monthly Dataset Aggregation
-
-## Completed
-
-- Loaded all monthly CRMLS listing files (`CRMLSListing*.csv`) from the `Data/` folder (29 files).
-- Loaded all monthly CRMLS sold files (`CRMLSSold*.csv`) from the `Data/` folder, including `_filled` versions (29 files).
-- Removed the extra `latfilled` and `lonfilled` columns from `_filled` sold files.
-- Combined all monthly files into:
-  - `listings.csv`
-  - `sold.csv`
-- Filtered both datasets to Residential properties only.
-- Saved the Residential datasets into the `Outputs/` folder.
-
-## Week 1 Results
-
-### Listings
-
-- Monthly files: **29**
-- Rows after concatenation: **930,311**
-- Residential rows: **591,977**
-
-### Sold
-
-- Monthly files: **29**
-- Rows after concatenation: **640,335**
-- Residential rows: **430,635**
-
----
-
-# Week 2 — Dataset Structuring and Validation
-
-## Completed
-
-- Reloaded all monthly CRMLS listing and sold datasets from the raw `Data/` folder.
-- Inspected dataset structure, including:
-  - row count
-  - column count
-  - data types
-  - missing values
-- Reviewed property types before filtering.
-- Calculated Residential property share.
-- Filtered both datasets to Residential properties.
-- Created missing value reports.
-- Flagged columns with more than 90% missing values.
-- Removed columns with more than 90% missing values.
-- Generated numeric distribution summaries for:
-  - ClosePrice
-  - LivingArea
-  - DaysOnMarket
-- Saved cleaned datasets:
-  - `sold_week2.csv`
-  - `listings_week2.csv`
-
-## Week 2 Results
-
-### Property Type Distribution
-
-Eight property types were identified.
-
-| Property Type | Share |
-|--------------|------:|
-| Residential | 67.25% |
-| ResidentialLease | 22.91% |
-| Land | 3.24% |
-| ManufacturedInPark | 2.71% |
-| ResidentialIncome | 2.68% |
-| CommercialSale | 0.62% |
-| CommercialLease | 0.52% |
-| BusinessOpportunity | 0.07% |
-
-After filtering:
-
-- Residential sold transactions: **430,635**
-- Residential listings: **591,977**
-
-### Missing Value Summary
-
-| Dataset | Columns >90% Missing |
-|---------|---------------------:|
-| Sold | 15 |
-| Listings | 13 |
-
-These columns were removed before saving the Week 2 datasets.
-
-### Numeric Distribution Summary
-
-| Metric | ClosePrice | LivingArea | DaysOnMarket |
-|-------|-----------:|-----------:|-------------:|
-| Minimum | 0 | 0 | -288 |
-| Median | 825,000 | 1,644 | 18 |
-| Mean | 1,188,983 | 1,904 | 37.34 |
-| Maximum | 989,500,000 | 17,021,321 | 12,430 |
-
-The summary statistics indicate that all three variables are right-skewed, with mean values exceeding their medians due to a relatively small number of extreme observations.
-
-## Exploratory Data Analysis
-
-### Residential vs. Other Property Types
-
-Residential properties account for **67.25%** of all sold MLS records.
-
-### Median and Average Close Price
-
-- Median: **$825,000**
-- Mean: **$1,188,983**
-
-The mean is substantially higher than the median, indicating a right-skewed price distribution.
-
-### Days on Market
-
-- Median: **18 days**
-- Mean: **37.34 days**
-
-Most homes sold relatively quickly, while a smaller number remained on the market much longer.
-
-### Sold Above vs. Below List Price
-
-- Above list price: **40.09%**
-- Below list price: **42.54%**
-
-### Date Consistency
-
-A total of **65** records had a ListingContractDate later than the CloseDate. These records should be reviewed during data cleaning.
-
-### Highest Median Price Counties
-
-Among the counties with the highest median sold prices were:
-
-- San Mateo
-- Santa Clara
-- San Francisco
-- Orange
-- Marin
-
----
-## Data Quality Observations
-
-The exploratory analysis identified several records that should be reviewed during the data cleaning stage. At this stage, these observations have been flagged rather than removed.
-
-Potential data quality issues include:
-
-- **Negative DaysOnMarket values**, with a minimum of **-288 days**, which may indicate date inconsistencies or calculation errors.
-- **Extremely large LivingArea values**, with a maximum of **17,021,321 square feet**, which are unlikely for individual residential properties and should be verified.
-- **Very large ClosePrice values**, with a maximum of **$989,500,000**, which may represent exceptional transactions or potential data entry issues.
-- The distributions of **ClosePrice**, **LivingArea**, and **DaysOnMarket** are all **right-skewed**, indicating that a relatively small number of extreme observations substantially increase the mean above the median.
-- **65 records** were identified where the `ListingContractDate` occurred after the `CloseDate`, suggesting potential date consistency issues that require further investigation.
-
-These observations have been documented for follow-up during the data cleaning phase. The next step will be to determine whether each flagged record represents a valid market transaction or a data quality issue requiring correction or removal.
-## Next Steps
-
-The next stage of the project will focus on enriching the MLS datasets with external economic data.
-
-Planned tasks include:
-
-- Fetch the weekly 30-year fixed mortgage rate (`MORTGAGE30US`) directly from the Federal Reserve Economic Data (FRED).
-- Resample the weekly mortgage rate data into monthly averages.
-- Create a `year_month` key from:
-  - `CloseDate` for the sold dataset
-  - `ListingContractDate` for the listings dataset
-- Merge the monthly mortgage rate data into both datasets using a left join.
-- Validate the merge by checking for unmatched records and missing mortgage rate values.
-- Prepare the enriched datasets for subsequent market trend analysis and Tableau dashboard development.
----
-
-## Repository Structure
-
-```
-Data/
-Outputs/
-Reports/
-Scripts/
-README.md
-```
-
----
+These are expected at this stage — the handbook's Week 4–7 phases specifically cover date-consistency flagging, invalid-value handling, and IQR-based outlier detection, so no cleaning has been applied to the data yet beyond the Residential filter and missing-column drops.
 
 ## How to Run
 
-Run Week 1:
+1. Install dependencies: `pip install pandas matplotlib`
+2. Place monthly `CRMLSListingYYYYMM.csv` and `CRMLSSoldYYYYMM.csv` files in a `Data/` folder (not included in this repo — see Data Note below)
+3. Run scripts in order from the project root:
+   ```
+   python3 Scripts/week1.py
+   python3 Scripts/week2_validation_structure.py
+   python3 Scripts/week3_mortgage_enrichment.py
+   ```
+4. Each script reads the previous week's output from `Outputs/` and writes its own results there; supporting reports (missing value summaries, EDA, distributions) are written to `Reports/`
 
-```bash
-python week1_listings.py
-python week1_sold.py
-```
+**Data Note**: Raw MLS transaction data is confidential and is not included in this repository, per program requirements.
 
-Run Week 2:
+## Outputs
 
-```bash
-python week2_validation.py
-```
+- `Outputs/listings.csv`, `Outputs/sold.csv` — combined, Residential-filtered datasets (Week 1)
+- `Outputs/listings_week2.csv`, `Outputs/sold_week2.csv` — datasets after high-missing column drops (Week 2)
+- `Outputs/listings_week3.csv`, `Outputs/sold_week3.csv` — Week 2 datasets enriched with monthly mortgage rates (Week 3)
+- `Reports/` — property type summaries, dataset structure reports, missing value reports, numeric distribution and outlier summaries, EDA summary, top counties by median price, mortgage rate data, and merge validation
 
-Week 2 generates:
+## Next Steps
 
-### Outputs
-
-- sold_week2.csv
-- listings_week2.csv
-
-### Reports
-
-- Dataset structure reports
-- Property type reports
-- Missing value reports
-- Numeric distribution summary
-
----
-
-## Repository Notes
-
-This repository is updated weekly throughout the internship. It contains Python scripts, documentation, and generated reports while excluding the raw MLS datasets from version control.
+- **Weeks 4–5**: Clean and standardize the dataset — fix date types, handle invalid numeric values, add date-consistency and geographic data quality flags
+- **Week 6**: Engineer market metrics (price ratio, price per sq ft, days on market, listing-to-contract and contract-to-close durations) and add school district data
+- **Week 7**: Apply IQR-based outlier detection and produce a filtered, analysis-ready dataset
+- **Weeks 8–10**: Build Tableau market analysis and competitive analysis dashboards
+- **Weeks 11–12**: Publish dashboards, write the 1-page market intelligence report, and deliver the final presentation
