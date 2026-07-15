@@ -20,7 +20,7 @@ This project turns raw monthly MLS listing and sold transaction data (Southern/C
 | 2 | Dataset Structuring & Validation | Inspects structure and data types, quantifies missing values, drops columns >90% missing (retaining core analytical fields regardless), summarizes numeric distributions, and answers key EDA questions | 13 columns dropped per dataset; EDA complete (price, days on market, list-vs-close pricing, top counties) |
 | 3 | Mortgage Rate Enrichment | Fetches the FRED `MORTGAGE30US` weekly series, resamples to monthly averages, and merges onto both datasets using a `year_month` key | 100% match rate, no unmatched months, Jan 2024 – Jun 2026 |
 
-Weeks 4 onward (cleaning, feature engineering, outlier detection, Tableau dashboards, final report) are in progress — see **Next Steps** below.
+Weeks 4 onward (cleaning, feature engineering, outlier detection, Tableau dashboards, final report) are in progress: see **Next Steps** below.
 
 ## Key Results So Far
 
