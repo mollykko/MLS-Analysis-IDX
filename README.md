@@ -118,6 +118,24 @@ Example preview from the sold dataset:
 3  2024-01-30    2024-01    858000.0    6.642
 4  2024-01-29    2024-01  1890500.0    6.642
 ```
+## Week 4 – Data Cleaning and Preparation
+
+### Completed
+- Cleaned and standardized the Week 3 mortgage-enriched datasets
+- Converted date and numeric fields to appropriate data types
+- Identified and handled invalid numeric values while preserving otherwise usable records
+- Saved cleaned datasets as `sold_week4.csv` and `listings_week4.csv`
+
+### Key Results
+- **Sold:** 448,198 → 448,197 rows; 1 invalid transaction with `ClosePrice <= 0` removed
+- **Listings:** 616,099 → 616,099 rows; no records removed
+- Invalid `LivingArea`, negative `DaysOnMarket`, and negative bedroom/bathroom values were converted to missing rather than removing entire records
+- Supporting reports were generated for missing values, invalid numeric values, data types, and before/after row counts
+
+### Next Steps
+- Review the frequency of invalid numeric values identified during cleaning
+- Perform date consistency checks and create timeline flags
+- Validate geographic coordinates and flag invalid or implausible locations
 
 ## How to Run
 
