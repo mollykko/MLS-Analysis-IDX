@@ -127,10 +127,13 @@ Example preview from the sold dataset:
 - Saved cleaned datasets as `sold_week4.csv` and `listings_week4.csv`
 
 ### Key Results
-- **Sold:** 448,198 → 448,197 rows; 1 invalid transaction with `ClosePrice <= 0` removed
-- **Listings:** 616,099 → 616,099 rows; no records removed
-- Invalid `LivingArea`, negative `DaysOnMarket`, and negative bedroom/bathroom values were converted to missing rather than removing entire records
-- Supporting reports were generated for missing values, invalid numeric values, data types, and before/after row counts
+
+- **Sold:** 448,198 → 448,197 rows; 1 invalid transaction with `ClosePrice <= 0` was removed
+- **Listings:** 616,099 → 616,099 rows; no records were removed
+- **Invalid LivingArea:** 165 sold records and 394 listing records had `LivingArea <= 0`
+- **Negative DaysOnMarket:** 50 sold records and 28 listing records were identified
+- No negative bedroom or bathroom counts were found
+- Invalid `LivingArea` and `DaysOnMarket` values were converted to missing rather than removing otherwise usable records
 
 ### Next Steps
 - Review the frequency of invalid numeric values identified during cleaning
