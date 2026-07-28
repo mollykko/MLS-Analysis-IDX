@@ -135,10 +135,38 @@ Example preview from the sold dataset:
 - No negative bedroom or bathroom counts were found
 - Invalid `LivingArea` and `DaysOnMarket` values were converted to missing rather than removing otherwise usable records
 
+## Week 5 – Data Quality Validation
+
+### Completed
+
+- Validated the logical order of listing, purchase contract, and close dates
+- Created boolean flags for inconsistent transaction timelines
+- Performed geographic data quality checks on latitude and longitude fields
+- Generated date and geographic quality summary reports
+- Saved validated datasets as:
+  - `sold_week5.csv`
+  - `listings_week5.csv`
+
+### Key Results
+
+**Date Consistency**
+
+- 68 sold records and 84 listing records had listing dates recorded after close dates
+- 240 sold records and 268 listing records had purchase contract dates recorded after close dates
+- 533 sold records and 568 listing records contained inconsistent transaction timelines
+
+**Geographic Data Quality**
+
+- 16,231 sold records (3.62%) and 81,009 listing records (13.15%) were missing geographic coordinates
+- 37 sold records and 75 listing records contained zero coordinates
+- 31 sold records and 85 listing records had positive longitude values (invalid for California)
+- 99 sold records and 323 listing records contained implausible coordinates outside the expected California range
+
 ### Next Steps
-- Review the frequency of invalid numeric values identified during cleaning
-- Perform date consistency checks and create timeline flags
-- Validate geographic coordinates and flag invalid or implausible locations
+
+- Engineer analytical features including price ratio, price per square foot, and transaction duration metrics
+- Incorporate additional school district information where available
+- Prepare the dataset for IQR-based outlier detection and final analytical modeling
 
 ## How to Run
 
