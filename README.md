@@ -162,6 +162,8 @@ Example preview from the sold dataset:
 - 31 sold records and 85 listing records had positive longitude values (invalid for California)
 - 99 sold records and 323 listing records contained implausible coordinates outside the expected California range
 
+The validation process identified records that may not be suitable for every analysis. Rather than removing them, quality flags were added so that future analyses can selectively exclude only the records relevant to each use case.
+
 ### Next Steps
 
 - Engineer analytical features including price ratio, price per square foot, and transaction duration metrics
