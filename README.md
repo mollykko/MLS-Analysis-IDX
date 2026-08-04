@@ -240,6 +240,14 @@ Created a county-level summary containing:
 
 County-level results should be interpreted together with transaction counts because counties with very small samples may produce unstable median values.
 
+## Next Steps
+
+- Apply IQR-based outlier detection to ClosePrice, LivingArea, and DaysOnMarket
+- Add outlier flag columns without deleting raw records
+- Save both full flagged and clean filtered datasets
+- Compare dataset size and median values before and after outlier filtering
+- Prepare the final analytical datasets for Tableau dashboard development
+- 
 ## How to Run
 
 1. Install dependencies:
