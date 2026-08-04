@@ -164,11 +164,81 @@ Example preview from the sold dataset:
 
 The validation process identified records that may not be suitable for every analysis. Rather than removing them, quality flags were added so that future analyses can selectively exclude only the records relevant to each use case.
 
-### Next Steps
+## Week 6 – Feature Engineering and Market Metrics
 
-- Engineer analytical features including price ratio, price per square foot, and transaction duration metrics
-- Incorporate additional school district information where available
-- Prepare the dataset for IQR-based outlier detection and final analytical modeling
+### Completed
+
+Engineered the housing market metrics required for future Tableau dashboard development.
+
+Created the following analytical features:
+
+- Price ratio
+- Close-to-original-list ratio
+- Price per square foot
+- Days on market
+- Year, month, and year-month variables
+- Listing-to-contract duration
+- Contract-to-close duration
+
+Added California school-district information using property latitude and longitude coordinates and the California School District Areas 2024–25 boundary dataset.
+
+Because California elementary and secondary district boundaries may overlap, district matches were stored in separate elementary, secondary, and unified district fields. This preserved one row per MLS record while retaining all applicable district information.
+
+Generated a segmented county-level market summary and validation reports for the engineered metrics and school-district matching process.
+
+Saved the enriched datasets as:
+
+- `sold_week6.csv`
+- `listings_week6.csv`
+
+### Feature Engineering Results
+
+All engineered numeric features contained zero infinite values.
+
+Sold dataset feature coverage:
+
+| Feature | Non-Null Records | Missing Records |
+|---|---:|---:|
+| Price Ratio | 447,369 | 828 |
+| Close-to-Original-List Ratio | 447,369 | 828 |
+| Price Per Sq Ft | 447,776 | 421 |
+| Days on Market | 448,147 | 50 |
+| Year / Month / YrMo | 448,197 | 0 |
+| Listing-to-Contract Days | 447,705 | 492 |
+| Contract-to-Close Days | 447,759 | 438 |
+
+The listings dataset contained more missing values for close-price and close-date-based metrics because many listing records did not contain completed transaction information.
+
+### School District Matching Results
+
+| Dataset | Eligible Coordinates | Matched Records | Unmatched Eligible Records |
+|---|---:|---:|---:|
+| Sold | 431,867 | 431,740 | 127 |
+| Listings | 534,767 | 534,561 | 206 |
+
+School-district matching preserved the original dataset row counts:
+
+- Sold: 448,197 rows
+- Listings: 616,099 rows
+
+The district boundary file contains unified districts as well as overlapping elementary and secondary district boundaries. Separate district fields were therefore created for each district type.
+
+A small number of eligible coordinates remained unmatched, potentially because points fell directly on district boundaries or within small boundary gaps. These records were retained without forcing a district assignment.
+
+### Segmented Market Summary
+
+Created a county-level summary containing:
+
+- Transaction count
+- Median close price
+- Median original list price
+- Median price ratio
+- Median price per square foot
+- Median days on market
+- Median listing-to-contract days
+- Median contract-to-close days
+
+County-level results should be interpreted together with transaction counts because counties with very small samples may produce unstable median values.
 
 ## How to Run
 
