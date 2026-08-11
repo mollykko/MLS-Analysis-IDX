@@ -305,13 +305,163 @@ The sample output demonstrates the engineered metrics at the transaction level a
 Week 6 transformed the cleaned MLS records into an analysis-ready dataset containing pricing, market-speed, transaction-duration, time-series, and school-district features. Both datasets retained their original Week 5 row counts, and the newly engineered fields are ready for Week 7 outlier detection and subsequent Tableau development.
 
 
+## Week 7 – Outlier Detection and Data Quality
+
+### Objective
+
+Week 7 identified extreme values that could distort market comparisons and Tableau results.
+
+The analysis applied the Interquartile Range method to:
+
+* `ClosePrice`
+* `LivingArea`
+* `DaysOnMarket`
+* `price_per_sqft`
+* `close_to_original_list_ratio`
+
+The first three fields are explicitly required by the Week 7 deliverable. Price per square foot and close-to-original-list ratio were also included because extreme values in these Week 6 metrics can distort pricing and negotiation analysis.
+
+All records were preserved in full flagged datasets. Separate filtered datasets were created for downstream analysis.
+
+### Method
+
+IQR thresholds were calculated independently for the sold and listings datasets:
+
+```text
+IQR = Q3 - Q1
+Lower Bound = Q1 - 1.5 × IQR
+Upper Bound = Q3 + 1.5 × IQR
+```
+
+A record was classified as an IQR outlier when a non-missing value fell below the lower bound or above the upper bound.
+
+The script also retained the following business rules:
+
+| Field        | Business Rule                              |
+| ------------ | ------------------------------------------ |
+| ClosePrice   | Values less than or equal to 0 are invalid |
+| LivingArea   | Values less than or equal to 0 are invalid |
+| DaysOnMarket | Negative values are invalid                |
+
+No additional business-invalid records were found because these values had already been handled during Week 4. Missing values were retained and were not classified as outliers.
+
+### IQR Boundaries
+
+#### Sold Dataset
+
+| Field                        |      Q1 |  Median |        Q3 | Lower Bound | Upper Bound |
+| ---------------------------- | ------: | ------: | --------: | ----------: | ----------: |
+| ClosePrice                   | 575,000 | 825,000 | 1,300,000 |    -512,500 |   2,387,500 |
+| LivingArea                   |   1,248 |   1,646 |     2,224 |        -216 |       3,688 |
+| DaysOnMarket                 |       8 |      18 |        48 |         -52 |         108 |
+| Price Per Sq Ft              |  367.99 |  537.21 |    732.48 |     -178.76 |    1,279.23 |
+| Close-to-Original-List Ratio |  0.9537 |  0.9956 |    1.0193 |      0.8553 |      1.1178 |
+
+#### Listings Dataset
+
+| Field                        |      Q1 |  Median |        Q3 | Lower Bound |  Upper Bound |
+| ---------------------------- | ------: | ------: | --------: | ----------: | -----------: |
+| ClosePrice                   | 600,000 | 858,000 | 1,355,999 | -533,998.50 | 2,489,997.50 |
+| LivingArea                   |   1,248 |   1,673 |     2,304 |        -336 |        3,888 |
+| DaysOnMarket                 |       5 |      10 |        21 |         -19 |           45 |
+| Price Per Sq Ft              |  396.27 |  565.22 |    767.42 |     -160.47 |     1,324.16 |
+| Close-to-Original-List Ratio |  0.9680 |  1.0000 |    1.0283 |      0.8775 |       1.1188 |
+
+Because price, living area, DaysOnMarket, and PPSF are right-skewed nonnegative fields, their IQR lower bounds fall below zero. As a result, most IQR flags for these fields are upper-tail outliers. The percentile values were retained in the detailed report to support further review rather than automatically creating additional removal rules.
+
+### Outlier Results
+
+Individual outlier counts overlap because one record may be extreme in multiple fields.
+
+| Metric                       | Sold Outliers | Sold Percent | Listings Outliers | Listings Percent |
+| ---------------------------- | ------------: | -----------: | ----------------: | ---------------: |
+| ClosePrice                   |        33,538 |        7.48% |            10,627 |            1.72% |
+| LivingArea                   |        19,580 |        4.37% |            30,329 |            4.92% |
+| DaysOnMarket                 |        34,211 |        7.63% |            49,203 |            7.99% |
+| Price Per Sq Ft              |        18,912 |        4.22% |             6,618 |            1.07% |
+| Close-to-Original-List Ratio |        42,545 |        9.49% |            14,869 |            2.41% |
+
+Close-to-original-list ratio produced the largest number of sold outliers, while DaysOnMarket produced the largest number of listing outliers.
+
+The flagged sample confirms that many records were extreme across multiple measures. Examples included multimillion-dollar properties with unusually large living areas, long marketing periods, high price per square foot, and unusually low close-to-original-list ratios.
+
+### Dataset Size Comparison
+
+| Dataset  | Rows Before | Rows After | Unique Rows Excluded | Percent Excluded |
+| -------- | ----------: | ---------: | -------------------: | ---------------: |
+| Sold     |     448,197 |    344,870 |              103,327 |           23.05% |
+| Listings |     616,099 |    521,686 |               94,413 |           15.32% |
+
+The original Week 6 row counts remain intact in:
+
+* `sold_week7_flagged.csv`
+* `listings_week7_flagged.csv`
+
+Only the separate filtered datasets exclude records carrying at least one Week 7 outlier flag.
+
+### Median Comparison
+
+#### Sold Dataset
+
+| Metric                       | Before Filtering | After Filtering |   Change |
+| ---------------------------- | ---------------: | --------------: | -------: |
+| ClosePrice                   |         $825,000 |        $770,000 | -$55,000 |
+| LivingArea                   |            1,646 |           1,582 |      -64 |
+| DaysOnMarket                 |               18 |              16 |       -2 |
+| Price Per Sq Ft              |          $537.21 |         $516.10 |  -$21.11 |
+| Close-to-Original-List Ratio |           0.9956 |          1.0000 |  +0.0044 |
+
+#### Listings Dataset
+
+| Metric                       | Before Filtering | After Filtering |   Change |
+| ---------------------------- | ---------------: | --------------: | -------: |
+| ClosePrice                   |         $858,000 |        $800,000 | -$58,000 |
+| LivingArea                   |            1,673 |           1,620 |      -53 |
+| DaysOnMarket                 |               10 |               9 |       -1 |
+| Price Per Sq Ft              |          $565.22 |         $542.36 |  -$22.86 |
+| Close-to-Original-List Ratio |           1.0000 |          1.0000 |   0.0000 |
+
+### Key Findings
+
+* Outlier filtering reduced the sold median close price from $825,000 to $770,000, showing that high-value transactions raised the unfiltered market median.
+* The listings median close price decreased from $858,000 to $800,000 after filtering.
+* Median living area and price per square foot declined in both datasets, consistent with the removal of unusually large or expensive properties.
+* Median DaysOnMarket decreased from 18 to 16 days for sold records and from 10 to 9 days for listings.
+* The filtered sold close-to-original-list ratio moved to 1.0, representing a typical transaction closing at its original asking price.
+* Because more than one-fifth of sold records were flagged across the five combined metrics, the full flagged dataset should remain available for analyses where luxury or other atypical market segments are relevant.
+
+### Deliverables
+
+The following Week 7 datasets were created:
+
+* `sold_week7_flagged.csv`
+* `listings_week7_flagged.csv`
+* `sold_week7_filtered.csv`
+* `listings_week7_filtered.csv`
+
+The following reports were created:
+
+* `week7_iqr_bounds_summary.csv`
+* `week7_outlier_summary.csv`
+* `week7_before_after_summary.csv`
+* `week7_outlier_sample.csv`
+
+### Key Result
+
+Week 7 produced two versions of each dataset for different analytical purposes:
+
+* The full flagged datasets preserve every record and make each outlier decision auditable.
+* The filtered datasets remove records flagged by the IQR thresholds and are prepared for general-market analysis and Tableau dashboard development.
+
+Extreme properties were not permanently deleted, allowing future analyses to include or exclude them depending on the business question.
+
 ## Next Steps
 
-- Apply IQR-based outlier detection to ClosePrice, LivingArea, and DaysOnMarket
-- Add outlier flag columns without deleting raw records
-- Save both full flagged and clean filtered datasets
-- Compare dataset size and median values before and after outlier filtering
-- Prepare the final analytical datasets for Tableau dashboard development
+- Import the filtered Week 7 datasets into Tableau
+- Build monthly market metrics from January 2024 through June 2026
+- Add geographic and PropertySubType filters
+- Develop the market analysis dashboards
+- Develop agent and brokerage competitive-intelligence dashboards
 - 
 ## How to Run
 
