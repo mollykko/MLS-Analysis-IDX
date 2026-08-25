@@ -454,15 +454,31 @@ Week 7 produced two versions of each dataset for different analytical purposes:
 * The filtered datasets remove records flagged by the IQR thresholds and are prepared for general-market analysis and Tableau dashboard development.
 
 Extreme properties were not permanently deleted, allowing future analyses to include or exclude them depending on the business question.
+## Weeks 8–9: Tableau Dashboard Development
 
-## Next Steps
+During Weeks 8 and 9, the project transitioned from data preparation to Tableau dashboard development using the Week 7 filtered datasets.
 
-- Import the filtered Week 7 datasets into Tableau
-- Build monthly market metrics from January 2024 through June 2026
-- Add geographic and PropertySubType filters
-- Develop the market analysis dashboards
-- Develop agent and brokerage competitive-intelligence dashboards
-- 
+The initial California Real Estate Market Overview dashboard includes:
+
+- Monthly Median Close Price
+- Average Days on Market
+- Average Close-to-Original-List Ratio
+- Closed Sales
+- New Listings
+
+The dashboard covers January 2024 through June 2026 and includes interactive filters for City, County or Parish, Postal Code, and Property Sub Type.
+
+### Tableau Public Dashboard
+
+[View the interactive Market Overview Dashboard](PASTE_TABLEAU_PUBLIC_URL_HERE)
+
+### Next Steps
+
+- Verify cross-data-source filter behavior
+- Refine labels, tooltips, colors, and dashboard navigation
+- Develop the agent and brokerage competitive-analysis dashboards
+- Prepare the final market intelligence report and presentation
+  
 ## How to Run
 
 1. Install dependencies:
