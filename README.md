@@ -454,31 +454,66 @@ Week 7 produced two versions of each dataset for different analytical purposes:
 * The filtered datasets remove records flagged by the IQR thresholds and are prepared for general-market analysis and Tableau dashboard development.
 
 Extreme properties were not permanently deleted, allowing future analyses to include or exclude them depending on the business question.
-## Weeks 8–9: Tableau Dashboard Development
+## Weeks 8–10 – Tableau Dashboard Development
 
-During Weeks 8 and 9, the project transitioned from data preparation to Tableau dashboard development using the Week 7 filtered datasets.
+### Market Analysis Dashboard
 
-The initial California Real Estate Market Overview dashboard includes:
+## Interactive Tableau Dashboards
 
-- Monthly Median Close Price
-- Average Days on Market
-- Average Close-to-Original-List Ratio
-- Closed Sales
-- New Listings
+- **[Competitive Analysis Dashboard](https://public.tableau.com/shared/X57G79R5Y?:display_count=n&:origin=viz_share_link)**  
+  Top listing agents and offices by sales volume and units, plus ZIP-level median price and homes sold maps.
 
-The dashboard covers January 2024 through June 2026 and includes interactive filters for City, County or Parish, Postal Code, and Property Sub Type.
+- **[Market Analysis Dashboard](https://public.tableau.com/views/market_analysis_17883043052900/MarketOverview?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)**  
+  Monthly median close price, days on market, close-to-original-list ratio, new listings, and closed sales.
+Built an interactive Tableau market overview using the cleaned Residential MLS datasets. The dashboard tracks monthly market conditions from January 2024 through the latest available data, including:
 
-### Tableau Public Dashboard
+- Median close price
+- Average days on market
+- Close-to-original-list price ratio
+- New listings
+- Closed sales
 
-[View the interactive Market Overview Dashboard](PASTE_TABLEAU_PUBLIC_URL_HERE)
+The dashboard supports geographic and property-level filtering by city, county, postal code, and property subtype.
 
-### Next Steps
+### Preliminary Market Observations
 
-- Verify cross-data-source filter behavior
-- Refine labels, tooltips, colors, and dashboard navigation
-- Develop the agent and brokerage competitive-analysis dashboards
-- Prepare the final market intelligence report and presentation
-  
+The aggregate market shows clear seasonal patterns in listing and sales activity, with activity generally increasing during spring and summer and declining around year-end. Median close prices remain relatively elevated but fluctuate over time rather than following a single continuous trend.
+
+Days on market and the close-to-original-list ratio also indicate changing market conditions. The close-to-list ratio weakened through portions of 2025 before recovering toward 99% in 2026, while days on market fluctuated across the period.
+
+These aggregate patterns provide a market baseline but also suggest that statewide-level trends may mask meaningful differences across local markets.
+
+### Competitive Analysis Dashboard
+
+Expanded the analysis from overall market conditions to geographic activity and competitive positioning by developing:
+
+- Top 100 listing agents by sales volume
+- Top 100 listing agents by units sold
+- Top 100 listing offices by sales volume
+- Top 100 listing offices by units sold
+- ZIP-code median close price map
+- ZIP-code homes sold map
+
+The office rankings can be filtered by city, county, postal code, and property subtype. The ZIP-code maps support geographic, property subtype, and month-year filtering.
+
+### Preliminary Competitive Observations
+
+The geographic views show that transaction activity and property values are not distributed evenly across California. Comparing the median-price and homes-sold maps provides a way to distinguish high-value markets from high-activity markets and identify areas where both dimensions overlap.
+
+The agent and office rankings also show that sales-volume leadership and transaction-unit leadership are not necessarily the same. This suggests that competitive position should be evaluated through both transaction scale and transaction value rather than a single ranking.
+
+### Next Steps – Focused Market & Competitive Analysis
+
+The next phase will use the existing dashboards as a drill-down funnel:
+
+1. Identify markets with meaningful transaction activity and property value using the ZIP-code maps.
+2. Select candidate cities or ZIP codes for deeper analysis.
+3. Compare their local price, days-on-market, close-to-list, listing, and sales trends against the broader market.
+4. Analyze the leading offices and agents within selected markets.
+5. Develop custom market and competitive dashboards based on the patterns identified, potentially focusing on brokerage market share, competitive concentration, and price positioning.
+
+This approach will move the project from descriptive market monitoring toward focused market intelligence and business insights.
+
 ## How to Run
 
 1. Install dependencies:
